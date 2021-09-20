@@ -14,10 +14,10 @@ test('should GET /', async () => {
 })
 
 test('should POST /message', async () => {
-    const data = { message: 'this is a post'}
+    const data = { username: 'user1', data: 'This is my message, hello'};
 
     const response = await supertest(app)
-        .post("/message")
+        .post('/message')
         .send(data)
 
     expect(response.status).toBe(200)
