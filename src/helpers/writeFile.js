@@ -1,28 +1,44 @@
 const fs = require('fs');
 
 function writeToFile(obj) {
+    let incomingObjToBuffer = Buffer.from(JSON.stringify(obj));
+
     return fs.open('src/data/data.json', 'as+', 0o666, (err, fd) => {
         if (err) console.log('There was an error opening the file', err);
         console.log('fddddd', fd)
 
         let objToBuffer = Buffer.from(JSON.stringify(obj));
 
-        fs.read(fd, objToBuffer, 0, objToBuffer.length, 0, (err, bytes) => {
+        fs.read(fd, (err, bytes, bufferInFile) => {
+            console.log('inside the read fd is', fd)
             if (err) {
                 console.log('Error in file read', err)
                 throw err
             };
             if (bytes > 0) {
-                console.log('reading some bytes', bytes)
-                console.log(objToBuffer.slice(0, bytes).toString())
+                console.log('reading some bytes', bytes, bufferInFile.length)
+                let existingObj = bufferInFile.slice(0, bytes).toString();
+                existingObj = JSON.parse(existingObj);
+
+                console.log('existing obj ', existingObj)
+                console.log('incomingObj', objToBuffer.toString())
                 // deserialize and re-serialize and write to file
+                existingObj.all.push(obj)
+                let newObjToBuffer = Buffer.from(JSON.stringify(existingObj));
+
+                helperToWrite(fd, newObjToBuffer)
             }
             if (bytes === 0) {
-                console.log('youre here because there\s no bytes')
-                // serialize the obj properly
-                helperToWrite(fd, objToBuffer)
+                console.log('youre here because there\'s no bytes')  
+
+                let bufferToObj = JSON.parse(objToBuffer.toString());
+                let mainObj = { all: [] }
+                mainObj.all.push(bufferToObj);
+                let objBackToBuffer = Buffer.from(JSON.stringify(mainObj))
+
+                helperToWrite(fd, objBackToBuffer)
             }
-            console.log('inside the read fd is', fd, 'bytes', bytes)
+       
             fs.close(fd);
         })
 
@@ -53,22 +69,17 @@ function writeToFile(obj) {
     // })
 }
 
-// function helperToWrite(filename, data) {
-//     return fs.writeFile(filename, data, 'utf8', (err) => {
-//         if (err) console.log('There was an error writing to the file', err)
-//     })
-// }
-
 function helperToWrite(fileDesc, buffer) {
+    console.log('inside the write fd is', fileDesc)
     fs.write(fileDesc, buffer, 0, buffer.length, 0, (err, bytes) => {
         if (err) {
             console.log('Error while writing to file', err)
             throw err;
         }
         if (bytes > 0) {
-            console.log(buffer.slice(0, bytes).toString())
+            console.log('in the write, we have bytes', buffer.slice(0, bytes).toString())
         }
-        fs.close(fd)
+        fs.close(fileDesc)
     })
 }
 
