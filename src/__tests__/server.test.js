@@ -27,22 +27,22 @@ test('should POST /message', async () => {
 })
 
 test('should GET messages for a given username', async () => {
-    const testObj = {
-        all: [
-            {
-                username: 'chichi',
-                data: 'This is Chichi the cat'
-            },
-            {
-                username: 'miki',
-                data: 'This is Miki the kitten'
-            }
-        ]
-    }
+    // const testObj = {
+    //     all: [
+    //         {
+    //             username: 'chichi',
+    //             data: 'This is Chichi the cat'
+    //         },
+    //         {
+    //             username: 'miki',
+    //             data: 'This is Miki the kitten'
+    //         }
+    //     ]
+    // }
 
     const response = await supertest(app)
         .get('/message/chichi')
-    
+    console.log(response.body)
     expect(response.status).toBe(200)
-    expect(response.body).toEqual(testObj.all[0])
+    expect(response.body.messages).toEqual('All the messages')
 })

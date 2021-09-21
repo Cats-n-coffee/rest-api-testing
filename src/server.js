@@ -12,10 +12,12 @@ app.get('/', (req, res) => {
 
 app.post('/message', (req, res) => {
     let data = req.body;
-
-    //writeToFile(data)
     let newId = randomId();
-    console.log({...data, id: newId })
+
+    data = { ...req.body, id: newId}
+    writeToFile(data)
+    
+    console.log(data)
 
     res.status(200);
     res.json({ message: 'Received'});
@@ -25,22 +27,21 @@ app.get('/message/:username', (req, res) => {
     const { username } = req.params;
     console.log(username)
 
-    const testObj = {
-        all: [
-            {
-                username: 'chichi',
-                data: 'This is Chichi the cat'
-            },
-            {
-                username: 'miki',
-                data: 'This is Miki the kitten'
-            }
-        ]
-    }
+    // const testObj = {
+    //     all: [
+    //         {
+    //             username: 'chichi',
+    //             data: 'This is Chichi the cat'
+    //         },
+    //         {
+    //             username: 'miki',
+    //             data: 'This is Miki the kitten'
+    //         }
+    //     ]
+    // }
 
     res.status(200);
-    //res.json({ messages: 'All the messages'});
-    res.json(testObj.all[0])
+    res.json({ messages: 'All the messages'});
 })
 
 
