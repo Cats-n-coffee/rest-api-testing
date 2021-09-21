@@ -6,7 +6,8 @@ const { randomId } = require('./helpers/other');
 app.use(express.json())
 
 app.get('/', (req, res) => {
-    res.json({ message: 'Home'})
+    res.status(200)
+    res.json({ message: 'Home'});
 })
 
 app.post('/message', (req, res) => {
@@ -16,8 +17,30 @@ app.post('/message', (req, res) => {
     let newId = randomId();
     console.log({...data, id: newId })
 
-    res.json({ message: 'Received'})
-    res.end()
+    res.status(200);
+    res.json({ message: 'Received'});
+})
+
+app.get('/message/:username', (req, res) => {
+    const { username } = req.params;
+    console.log(username)
+
+    const testObj = {
+        all: [
+            {
+                username: 'chichi',
+                data: 'This is Chichi the cat'
+            },
+            {
+                username: 'miki',
+                data: 'This is Miki the kitten'
+            }
+        ]
+    }
+
+    res.status(200);
+    //res.json({ messages: 'All the messages'});
+    res.json(testObj.all[0])
 })
 
 
